@@ -1,7 +1,4 @@
 const html = document.querySelector("html");
-// const focoBT = document.querySelector(".app__card-button--foco");
-// const curtoBT = document.querySelector(".app__card-button--curto");
-// const longoBT = document.querySelector(".app__card-button--longo");
 const banneer = document.querySelector(".app__image");
 const titulo = document.querySelector(".app__title");
 const satatuPauseBt = document.querySelector("#start-pause");
@@ -9,8 +6,9 @@ const iniciarPausarBt = document.querySelector("#start-pause span");
 const iniciarPausarBtIcone = document.querySelector(".app__card-primary-butto-icon");
 const tempoNaTela = document.querySelector("#timer");
 const validacaoItemSelecionado = document.querySelector(".app__section-task-list");
+const valorDoTempo =  document.querySelector(".app__card-timer");
 
-let temporizadorEmSegundos = 10;
+let temporizadorEmSegundos = valorDoTempo.value;
 let intervaloId = null;
 
 
@@ -30,106 +28,97 @@ musicaFocoInput.addEventListener("change", () => {
     }
 })
 
-// focoBT.addEventListener("click", () => {
-//     temporizadorEmSegundos = 10;
-//     alterarContexto('foco');
-// })
-
-// curtoBT.addEventListener("click", () => {
-//     temporizadorEmSegundos = 10;
-//     alterarContexto('descanso-curto')
-// })
-
-// longoBT.addEventListener("click", () => {
-//     temporizadorEmSegundos = 900;
-//     alterarContexto('descanso-longo')
-// })
-
-// function alterarContexto(contexto) {
-//     mostrarTempo()
-//     html.setAttribute("data-contexto", contexto);
-//     banneer.setAttribute('src', `/imagens/${contexto}.png`);
-//     switch (contexto) {
-//         case "foco":
-//             focoBT.classList.add("active");
-//             longoBT.classList.remove("active");
-//             curtoBT.classList.remove("active");
-
-//             titulo.innerHTML = `Otimize sua produtividade,<br>
-//                 <strong class="app__title-strong">mergulhe no que importa.</strong>
-//             `;
-//             break;
-//         case "descanso-curto":
-//             curtoBT.classList.add("active");
-//             focoBT.classList.remove("active");
-//             longoBT.classList.remove("active");
-
-//             titulo.innerHTML = `Que tal dá uma respirada,<br>
-//                     <strong class="app__title-strong">Faça uma pausa curta!</strong>
-//                 `;
-//             break;
-//         case "descanso-longo":
-//             longoBT.classList.add("active");
-//             focoBT.classList.remove("active");
-//             curtoBT.classList.remove("active");
-
-//             titulo.innerHTML = `Hora de voltar a superfície,<br>
-//                             <strong class="app__title-strong">Faça uma pausa longa!</strong>
-//                         `;
-//             break;
-//         default:
-//             break;
-//     }
-// }
+valorDoTempo.addEventListener('blur', function() {
+    const [horas, minutos, segundos] = valorDoTempo.value.split(':').map(Number);
+    temporizadorEmSegundos = (horas * 3600) + (minutos * 60) + (segundos || 0);
+});
 
 const contagemRegrassiva = () => {
     if (temporizadorEmSegundos <= 0) {
         audioTempoFinalizado.play();
+        valorDoTempo.value = '';
         alert("Tempo finalizado");
         const description = document.querySelector(".app__section-active-task-description");
         description.textContent = ''
         const focoAtivo = html.getAttribute("data-contexto") == 'foco';
         if (focoAtivo) {
-            const evento = new CustomEvent('FocoFinalizado')
+            const evento = new CustomEvent('FocoFinalizado');
             document.dispatchEvent(evento);
         }
-        zerar()
-        return
+        zerar();
+        return;
     }
-    temporizadorEmSegundos -=1
-    mostrarTempo()
-}
+    
+    temporizadorEmSegundos -= 1; 
+    
+    // Atualiza o campo de input com o tempo formatado
+    const horas = Math.floor(temporizadorEmSegundos / 3600);
+    const minutos = Math.floor((temporizadorEmSegundos % 3600) / 60);
+    const segundos = temporizadorEmSegundos % 60;
+
+    valorDoTempo.value = 
+        String(horas).padStart(2, '0') + ':' + 
+        String(minutos).padStart(2, '0') + ':' + 
+        String(segundos).padStart(2, '0');
+};
+
 
 satatuPauseBt.addEventListener("click", iniciarPausar)    
 
 function iniciarPausar() {
-
+    // valorDoTempo.length
+    console.log(valorDoTempo.length);
+    console.log(valorDoTempo.value);
     const classeAtivada = document.querySelectorAll('.app__section-task-list-item-active');
+    
     if (classeAtivada.length > 0 ) {
-        if (intervaloId){
-            audioTempoPausa.play()
-            zerar()
-            return
+        if (intervaloId) {
+            audioTempoPausa.play();
+            zerar();
+            return;
         }
-        audioTempoPlay.play()
-        intervaloId = setInterval(contagemRegrassiva, 1000)
-        iniciarPausarBt.innerHTML = '<strong>Pausar</strong>'
-        iniciarPausarBtIcone.setAttribute("src", "/imagens/pause.png")
-    }else{
-        showAlert('Necessário selecionar uma task', 'yellow');
+
+        // Inicia o temporizador
+        intervaloId = setInterval(contagemRegrassiva, 1000); // Executa a contagem a cada 1 segundo
+        audioTempoPlay.play();
+        iniciarPausarBt.innerHTML = '<strong>Pausar</strong>';
+        iniciarPausarBtIcone.setAttribute("src", "/imagens/pause.png");
+    } else if (valorDoTempo.value  == 0) {
+        showAlert('Necessário informar o tempo que deseja!', 'yellow');
+    } else if (valorDoTempo.value  == "00:00:00") {
+        showAlert('Tempo Inválido!', 'yellow');
+    } else if (classeAtivada.length  == 0) {
+        showAlert('Necessário selecionar uma task!', 'yellow');
     }
 }
 
+
 function zerar() {
-    clearInterval(intervaloId)
-    iniciarPausarBt.innerHTML = '<strong>Começar</strong>'
-    iniciarPausarBtIcone.setAttribute("src", "/imagens/play_arrow.png")
+    clearInterval(intervaloId); // Para o intervalo
+    iniciarPausarBt.innerHTML = '<strong>Começar</strong>';
+    iniciarPausarBtIcone.setAttribute("src", "/imagens/play_arrow.png");
     intervaloId = null;
 }
 
+
 function mostrarTempo() {
-    const tempo = new Date(temporizadorEmSegundos * 1000)
-    const tempoFormatado = tempo.toLocaleTimeString('pt-br', {minute: '2-digit', second: '2-digit' } )
-    tempoNaTela.innerHTML = `${tempoFormatado}`
+    const tempo = new Date(temporizadorEmSegundos * 1000);
+    const tempoFormatado = tempo.toLocaleTimeString('pt-br', { hour12: false, minute: '2-digit', second: '2-digit' });
+    
+    tempoNaTela.innerHTML = `${tempoFormatado}`;
 }
 mostrarTempo()
+
+
+document.getElementById('timer').addEventListener('input', function (e) {
+    let input = e.target.value.replace(/\D/g, ''); // Remove tudo que não é número
+    
+    if (input.length <= 2) {
+        e.target.value = input; // Apenas horas
+    } else if (input.length <= 4) {
+        e.target.value = input.slice(0, 2) + ':' + input.slice(2); // Horas e minutos
+    } else if (input.length <= 6) {
+        e.target.value = input.slice(0, 2) + ':' + input.slice(2, 4) + ':' + input.slice(4); // Horas, minutos e segundos
+    }
+});
+
