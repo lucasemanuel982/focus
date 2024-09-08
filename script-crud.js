@@ -93,7 +93,7 @@ function addTaskElement(task) {
     }
 
     const imageButton = document.createElement("img");
-    imageButton.setAttribute("src", "/imagens/edit.png");
+    imageButton.setAttribute("src", "./imagens/edit.png");
 
     button.append(imageButton);
 

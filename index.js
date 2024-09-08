@@ -14,10 +14,10 @@ let intervaloId = null;
 
 
 const musicaFocoInput = document.querySelector("#alternar-musica");
-const musica = new Audio('/sons/luna-rise-part-one.mp3')
-const audioTempoFinalizado = new Audio('/sons/beep.mp3')
-const audioTempoPausa = new Audio('/sons/pause.mp3')
-const audioTempoPlay = new Audio('/sons/play.wav ')
+const musica = new Audio('./sons/luna-rise-part-one.mp3')
+const audioTempoFinalizado = new Audio('./sons/beep.mp3')
+const audioTempoPausa = new Audio('./sons/pause.mp3')
+const audioTempoPlay = new Audio('./sons/play.wav ')
 musica.loop = true;
 musicaFocoInput.addEventListener("change", () => {
     if (musica.paused) {
@@ -82,7 +82,7 @@ function iniciarPausar() {
         intervaloId = setInterval(contagemRegrassiva, 1000); // Executa a contagem a cada 1 segundo
         audioTempoPlay.play();
         iniciarPausarBt.innerHTML = '<strong>Pausar</strong>';
-        iniciarPausarBtIcone.setAttribute("src", "/imagens/pause.png");
+        iniciarPausarBtIcone.setAttribute("src", "./imagens/pause.png");
     } else if (valorDoTempo.value  == 0) {
         showAlert('Necessário informar o tempo que deseja!', 'yellow');
     } else if (valorDoTempo.value  == "00:00:00") {
@@ -96,7 +96,7 @@ function iniciarPausar() {
 function zerar() {
     clearInterval(intervaloId); // Para o intervalo
     iniciarPausarBt.innerHTML = '<strong>Começar</strong>';
-    iniciarPausarBtIcone.setAttribute("src", "/imagens/play_arrow.png");
+    iniciarPausarBtIcone.setAttribute("src", "./imagens/play_arrow.png");
     intervaloId = null;
 }
 
