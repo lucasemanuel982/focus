@@ -1,4 +1,5 @@
 <h1>Fokus - Projeto de Temporizador de Tarefas</h1>
+<p>Link: https://lucasemanuel982.github.io/focus/</p>
     <h2>Descrição</h2>
     <p>O <strong>Fokus</strong> é uma aplicação web que visa ajudar os usuários a gerenciar suas tarefas e aumentar a produtividade. O projeto permite que você defina um temporizador, selecione tarefas e acompanhe seu progresso com alertas sonoros e visuais.</p>
     <h2>Funcionalidades</h2>
